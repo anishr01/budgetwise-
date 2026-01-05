@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.budgetwise.javafx.controller.LoginController"
+            prefWidth="420"
+            prefHeight="520"
+            stylesheets="@/css/app.css"
+            styleClass="root">
+
+    <VBox spacing="14"
+          alignment="CENTER"
+          AnchorPane.topAnchor="40"
+          AnchorPane.leftAnchor="40"
+          AnchorPane.rightAnchor="40"
+          styleClass="card">
+
+        <!-- Title -->
+        <Label text="Sign In" styleClass="title"/>
+
+        <Label text="Welcome back" styleClass="subtitle"/>
+
+        <!-- Email -->
+        <TextField fx:id="emailField"
+                   promptText="Email"
+                   prefHeight="40"
+                   styleClass="text-field"/>
+
+        <!-- Password -->
+        <StackPane>
+            <PasswordField fx:id="passwordField"
+                           promptText="Password"
+                           prefHeight="40"
+                           styleClass="password-field"/>
+
+            <TextField fx:id="passwordTextField"
+                       promptText="Password"
+                       visible="false"
+                       managed="false"
+                       prefHeight="40"
+                       styleClass="password-field"/>
+
+            <Button text="👁"
+                    onAction="#togglePassword"
+                    styleClass="eye-btn"
+                    StackPane.alignment="CENTER_RIGHT"/>
+        </StackPane>
+
+        <!-- Error -->
+        <Label fx:id="errorLabel"
+               visible="false"
+               wrapText="true"
+               styleClass="error"/>
+
+        <!-- Login Button -->
+        <Button text="Sign In"
+                prefWidth="320"
+                prefHeight="45"
+                onAction="#handleLogin"
+                styleClass="primary-btn"/>
+
+        <!-- Register link -->
+        <Hyperlink text="Don't have an account? Sign Up"
+                   onAction="#goToRegister"
+                   styleClass="link"/>
+
+    </VBox>
+</AnchorPane>

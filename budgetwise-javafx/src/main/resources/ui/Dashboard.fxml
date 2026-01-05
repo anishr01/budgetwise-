@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:id="rootPane"
+            fx:controller="com.budgetwise.javafx.controller.DashboardController"
+            prefWidth="1000"
+            prefHeight="600"
+            stylesheets="@/css/app.css"
+            styleClass="root">
+
+    <!-- ================= SIDEBAR ================= -->
+    <VBox prefWidth="220"
+          spacing="20"
+          AnchorPane.topAnchor="0"
+          AnchorPane.bottomAnchor="0"
+          AnchorPane.leftAnchor="0"
+          styleClass="sidebar">
+
+        <Label text="💰 BudgetWise"
+               styleClass="sidebar-title"/>
+
+        <!-- Sidebar items (NOW CLICKABLE) -->
+        <VBox spacing="10">
+
+
+            <Label text="📊 Expense Tracking"
+                   styleClass="sidebar-item"
+                   onMouseClicked="#openExpenses"/>
+
+            <Label text="💰 Budget"
+                   styleClass="sidebar-item"
+                   onMouseClicked="#openBudget"/>
+
+            <Label text="🎯 Saving Goals"
+                   styleClass="sidebar-item"
+                   onMouseClicked="#openSavingGoals"/>
+
+
+            <Label text="📈 Reports"
+                   styleClass="sidebar-item"
+                   onMouseClicked="#openReports"/>
+
+            <Label text="⚙ Settings"
+                   styleClass="sidebar-item"
+                   onMouseClicked="#openSettings"/>
+
+        </VBox>
+
+    </VBox>
+
+    <!-- ================= MAIN CONTENT ================= -->
+    <VBox alignment="CENTER"
+          spacing="16"
+          AnchorPane.leftAnchor="260"
+          AnchorPane.rightAnchor="60"
+          AnchorPane.topAnchor="120"
+          styleClass="card">
+
+        <!-- Dark mode toggle -->
+        <Button text="🌙 Dark Mode"
+                onAction="#toggleDarkMode"
+                styleClass="toggle-btn"
+                prefWidth="140"/>
+
+        <!-- Welcome -->
+        <Label fx:id="welcomeLabel"
+               text="👤 Welcome"
+               styleClass="welcome-name"/>
+
+        <!-- Title -->
+        <Label text="Welcome to BudgetWise Dashboard"
+               styleClass="dashboard-title"/>
+
+        <!-- Subtitle -->
+        <Label text="You have successfully logged in"
+               styleClass="dashboard-subtitle"/>
+
+        <!-- Logout -->
+        <Button text="⏻ Logout"
+                prefWidth="180"
+                prefHeight="40"
+                onAction="#handleLogout"
+                styleClass="logout-btn"/>
+
+    </VBox>
+
+</AnchorPane>
+

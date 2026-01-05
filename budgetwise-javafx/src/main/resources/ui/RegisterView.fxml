@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.budgetwise.javafx.controller.RegisterController"
+            prefWidth="420"
+            prefHeight="580"
+            stylesheets="@/css/app.css"
+            styleClass="root">
+
+    <VBox spacing="14"
+          alignment="CENTER"
+          styleClass="card"
+          AnchorPane.topAnchor="30"
+          AnchorPane.leftAnchor="40"
+          AnchorPane.rightAnchor="40">
+
+        <!-- ================= TITLE ================= -->
+        <Label text="Sign Up" styleClass="title">
+            <font>
+                <Font size="26"/>
+            </font>
+        </Label>
+
+        <Label text="Create your account" styleClass="subtitle"/>
+
+        <!-- ================= FULL NAME ================= -->
+        <TextField fx:id="fullNameField"
+                   promptText="Full Name"
+                   prefHeight="40"/>
+
+        <!-- ================= EMAIL ================= -->
+        <TextField fx:id="emailField"
+                   promptText="Email"
+                   prefHeight="40"/>
+
+        <!-- ================= PASSWORD ================= -->
+        <StackPane>
+            <PasswordField fx:id="passwordField"
+                           promptText="Password"
+                           prefHeight="40"
+                           styleClass="password-field"/>
+
+            <TextField fx:id="passwordTextField"
+                       promptText="Password"
+                       visible="false"
+                       managed="false"
+                       prefHeight="40"
+                       styleClass="password-field"/>
+
+            <Button text="👁"
+                    onAction="#togglePassword"
+                    styleClass="eye-btn"
+                    StackPane.alignment="CENTER_RIGHT"/>
+        </StackPane>
+
+        <!-- ================= CONFIRM PASSWORD ================= -->
+        <StackPane>
+            <PasswordField fx:id="confirmPasswordField"
+                           promptText="Confirm Password"
+                           prefHeight="40"
+                           styleClass="password-field"/>
+
+            <TextField fx:id="confirmPasswordTextField"
+                       promptText="Confirm Password"
+                       visible="false"
+                       managed="false"
+                       prefHeight="40"
+                       styleClass="password-field"/>
+
+            <Button text="👁"
+                    onAction="#toggleConfirmPassword"
+                    styleClass="eye-btn"
+                    StackPane.alignment="CENTER_RIGHT"/>
+        </StackPane>
+
+        <!-- ================= ERROR MESSAGE ================= -->
+        <Label fx:id="errorLabel"
+               visible="false"
+               wrapText="true"
+               styleClass="error"/>
+
+        <!-- ================= SIGN UP BUTTON ================= -->
+        <Button text="Sign Up"
+                prefWidth="320"
+                prefHeight="45"
+                onAction="#handleRegister"
+                styleClass="primary-btn"/>
+
+        <!-- ================= LOGIN LINK ================= -->
+        <Hyperlink text="Already have an account? Sign In"
+                   onAction="#goToLogin"
+                   styleClass="link"/>
+
+    </VBox>
+</AnchorPane>
+

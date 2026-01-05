@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.budgetwise.javafx.controller.ExpenseController"
+            prefWidth="1000"
+            prefHeight="600">
+
+    <!-- LEFT : FORM -->
+    <left>
+        <VBox spacing="12" prefWidth="350">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <Label text="Record New Transaction"
+                   style="-fx-font-size:18px; -fx-font-weight:bold;"/>
+
+
+            <Label text="Type"/>
+            <ComboBox fx:id="typeBox"
+                      editable="false"
+                      prefWidth="250"/>
+
+            <Label text="Category"/>
+            <ComboBox fx:id="categoryBox"
+                      editable="false"
+                      prefWidth="250"/>
+
+            <Label text="Amount"/>
+            <TextField fx:id="amountField"
+                       promptText="Enter amount"/>
+
+            <Label text="Date"/>
+            <DatePicker fx:id="datePicker"/>
+
+            <Label text="Note (Optional)"/>
+            <TextArea fx:id="noteArea"
+                      prefRowCount="3"/>
+
+            <HBox spacing="10">
+                <Button text="Save Transaction"
+                        onAction="#handleSave"
+                        prefWidth="150"/>
+                <Button text="Clear Form"
+                        onAction="#handleClear"
+                        prefWidth="120"/>
+            </HBox>
+
+            <Button
+                    text="Back to Dashboard"
+                    fx:id="backButton"
+                    onAction="#handleBack"
+                    prefWidth="200"
+                    style="-fx-background-color: #4f46e5; -fx-text-fill: white;"
+            />
+
+
+        </VBox>
+    </left>
+
+    <!-- RIGHT : TABLE -->
+    <center>
+        <VBox spacing="10">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <Label text="Transaction History and Summary"
+                   style="-fx-font-size:18px; -fx-font-weight:bold;"/>
+
+            <HBox spacing="10">
+                <Label text="Current Balance:"/>
+                <Label fx:id="balanceLabel"
+                       text="₹0.00"
+                       style="-fx-font-weight:bold;"/>
+            </HBox>
+
+            <TableView fx:id="expenseTable" prefHeight="450">
+                <columns>
+                    <TableColumn fx:id="dateCol" text="Date" prefWidth="120"/>
+                    <TableColumn fx:id="typeCol" text="Type" prefWidth="100"/>
+                    <TableColumn fx:id="categoryCol" text="Category" prefWidth="150"/>
+                    <TableColumn fx:id="amountCol" text="Amount" prefWidth="120"/>
+                    <TableColumn fx:id="noteCol" text="Note" prefWidth="150"/>
+                    <TableColumn fx:id="actionCol" text="Action" prefWidth="100"/>
+
+                </columns>
+            </TableView>
+
+        </VBox>
+    </center>
+
+</BorderPane>

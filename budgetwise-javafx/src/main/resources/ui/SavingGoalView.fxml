@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.budgetwise.javafx.controller.SavingGoalController"
+            style="-fx-background-color: #f4f6fb;">
+
+    <!-- ================= TOP ================= -->
+    <top>
+        <VBox spacing="12">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <Label text="Saving Goals"
+                   style="-fx-font-size: 26px; -fx-font-weight: bold;"/>
+
+            <HBox spacing="10">
+                <TextField fx:id="goalNameField"
+                           promptText="Goal name (Laptop, Bike)"
+                           prefWidth="220"/>
+
+                <TextField fx:id="targetAmountField"
+                           promptText="Target amount ₹"
+                           prefWidth="160"/>
+
+                <Button text="Add Goal"
+                        onAction="#handleAddGoal"
+                        style="-fx-background-color: #22c55e; -fx-text-fill: white;"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- ================= CENTER ================= -->
+    <center>
+        <ScrollPane fitToWidth="true"
+                    hbarPolicy="NEVER"
+                    vbarPolicy="AS_NEEDED"
+                    style="-fx-background-color: transparent;">
+
+            <VBox fx:id="goalList" spacing="15">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <!-- ================= BOTTOM ================= -->
+    <bottom>
+        <HBox alignment="CENTER_RIGHT">
+            <padding>
+                <Insets top="15" right="15" bottom="15" left="15"/>
+            </padding>
+
+            <Button text="Back to Dashboard"
+                    onAction="#handleBack"
+                    style="-fx-background-color: #2563eb; -fx-text-fill: white;"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

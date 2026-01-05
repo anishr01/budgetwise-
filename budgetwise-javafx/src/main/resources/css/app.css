@@ -1,0 +1,216 @@
+/* =====================================================
+   ROOT
+===================================================== */
+.root {
+    -fx-font-family: "Segoe UI", "Inter", "Arial";
+    -fx-background-color: #f4f6fb;
+}
+
+/* =====================================================
+   CARD (Login / Register / Dashboard Main Panel)
+===================================================== */
+.card {
+    -fx-background-color: white;
+    -fx-padding: 30;
+    -fx-background-radius: 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 18, 0.2, 0, 6);
+}
+
+/* =====================================================
+   TITLES
+===================================================== */
+.title {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #111827;
+}
+
+.subtitle {
+    -fx-text-fill: #6b7280;
+    -fx-font-size: 13px;
+}
+
+/* =====================================================
+   INPUT FIELDS
+===================================================== */
+.text-field,
+.password-field {
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #d1d5db;
+    -fx-background-color: white;
+    -fx-padding: 10 42 10 14;   /* right padding for 👁 */
+    -fx-font-size: 14px;
+}
+
+.text-field:focused,
+.password-field:focused {
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 2;
+}
+
+/* Placeholder color */
+.text-field .text,
+.password-field .text {
+    -fx-fill: #111827;
+}
+
+/* =====================================================
+   PRIMARY BUTTON (Sign In / Sign Up)
+===================================================== */
+.primary-btn {
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 12;
+    -fx-cursor: hand;
+}
+
+.primary-btn:hover {
+    -fx-background-color: #2563eb;
+}
+
+.primary-btn:pressed {
+    -fx-background-color: #1d4ed8;
+}
+
+/* =====================================================
+   LINKS
+===================================================== */
+.link {
+    -fx-text-fill: #2563eb;
+    -fx-underline: true;
+    -fx-cursor: hand;
+    -fx-font-size: 13px;
+}
+
+/* =====================================================
+   ERROR MESSAGE
+===================================================== */
+.error {
+    -fx-text-fill: #dc2626;
+    -fx-font-size: 12px;
+}
+
+/* =====================================================
+   PASSWORD EYE ICON
+===================================================== */
+.eye-btn {
+    -fx-background-color: transparent;
+    -fx-padding: 0 12 0 0;
+    -fx-cursor: hand;
+}
+
+.eye-btn:hover {
+    -fx-opacity: 0.75;
+}
+
+/* =====================================================
+   DASHBOARD SIDEBAR
+===================================================== */
+.sidebar {
+    -fx-background-color: #111827;
+    -fx-padding: 22;
+}
+
+.sidebar-title {
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.sidebar-item {
+    -fx-text-fill: #d1d5db;
+    -fx-padding: 10 0;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+}
+
+.sidebar-item:hover {
+    -fx-text-fill: white;
+}
+
+/* =====================================================
+   DASHBOARD CONTENT
+===================================================== */
+.dashboard-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #111827;
+}
+
+.dashboard-subtitle {
+    -fx-text-fill: #6b7280;
+}
+
+.welcome-name {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+/* =====================================================
+   DASHBOARD BUTTONS
+===================================================== */
+.logout-btn {
+    -fx-background-color: #ef4444;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+}
+
+.logout-btn:hover {
+    -fx-background-color: #dc2626;
+}
+
+.toggle-btn {
+    -fx-background-color: #111827;
+    -fx-text-fill: white;
+    -fx-background-radius: 20;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+}
+
+.toggle-btn:hover {
+    -fx-background-color: #1f2937;
+}
+
+/* =====================================================
+   DARK MODE SUPPORT
+===================================================== */
+.dark {
+    -fx-background-color: #0f172a;
+}
+
+.dark .card {
+    -fx-background-color: #1e293b;
+}
+
+.dark Label {
+    -fx-text-fill: white;
+}
+
+.dark .text-field,
+.dark .password-field {
+    -fx-background-color: #0f172a;
+    -fx-border-color: #334155;
+    -fx-text-fill: white;
+}
+
+.dark .dashboard-subtitle {
+    -fx-text-fill: #cbd5f5;
+}
+
+.secondary-btn {
+    -fx-background-color: #e5e7eb;
+    -fx-text-fill: #111827;
+    -fx-background-radius: 8;
+    -fx-padding: 8 16;
+    -fx-font-size: 14px;
+}
+
+.secondary-btn:hover {
+    -fx-background-color: #d1d5db;
+}
+

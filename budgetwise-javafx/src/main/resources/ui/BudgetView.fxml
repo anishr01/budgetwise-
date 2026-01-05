@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefWidth="1000" prefHeight="600"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.budgetwise.javafx.controller.BudgetController">
+
+    <!-- ================= TOP ================= -->
+    <top>
+        <VBox spacing="12" style="-fx-padding: 20;">
+            <Label text="Budget Plan"
+                   style="-fx-font-size: 22; -fx-font-weight: bold;" />
+
+            <HBox spacing="10">
+                <TextField fx:id="categoryField"
+                           promptText="Category (Food, Rent)"
+                           prefWidth="220"/>
+
+                <TextField fx:id="limitField"
+                           promptText="Budget Limit ₹"
+                           prefWidth="160"/>
+
+                <Button text="Add Budget"
+                        onAction="#addBudget"
+                        style="-fx-background-color: #4caf50; -fx-text-fill: white;"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- ================= CENTER (SCROLLABLE) ================= -->
+    <center>
+        <ScrollPane fitToWidth="true" vbarPolicy="AS_NEEDED">
+            <VBox fx:id="budgetList"
+                  spacing="16"
+                  style="-fx-padding: 20;" />
+        </ScrollPane>
+    </center>
+
+    <!-- ================= BOTTOM (FIXED) ================= -->
+    <bottom>
+        <HBox alignment="CENTER" style="-fx-padding: 16;">
+            <Button text="Back to Dashboard"
+                    onAction="#handleBack"
+                    prefWidth="240"
+                    style="-fx-background-color: #1e3a8a; -fx-text-fill: white;" />
+        </HBox>
+    </bottom>
+
+</BorderPane>
+
