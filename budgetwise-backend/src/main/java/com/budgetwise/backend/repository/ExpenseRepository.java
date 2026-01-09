@@ -1,0 +1,93 @@
+package com.budgetwise.backend.repository;
+
+import com.budgetwise.backend.dto.CategoryExpenseDTO;
+import com.budgetwise.backend.dto.MonthlyTrendDTO;
+import com.budgetwise.backend.model.Expense;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
+
+public interface ExpenseRepository extends JpaRepository<Expense, Long> {
+
+    // =================================================
+    // 1️⃣ CATEGORY-WISE EXPENSE (PIE CHART)
+    // =================================================
+    @Query("""
+        SELECT new com.budgetwise.backend.dto.CategoryExpenseDTO(
+            e.category,
+            SUM(e.amount)
+        )
+        FROM Expense e
+        WHERE e.userId = :userId
+          AND e.type = 'EXPENSE'
+        GROUP BY e.category
+    """)
+    List<CategoryExpenseDTO> getCategoryWiseExpense(
+            @Param("userId") Long userId
+    );
+
+    // =================================================
+    // 2️⃣ EXPENSE LIST (FILTERS)
+    // =================================================
+    List<Expense> findByUserIdAndMonthYear(
+            Long userId,
+            String monthYear
+    );
+
+    List<Expense> findByUserIdAndCategoryAndMonthYear(
+            Long userId,
+            String category,
+            String monthYear
+    );
+
+    // =================================================
+    // 3️⃣ TOTAL INCOME (BAR CHART)
+    // =================================================
+    @Query("""
+        SELECT COALESCE(SUM(e.amount), 0)
+        FROM Expense e
+        WHERE e.userId = :userId
+          AND e.monthYear = :monthYear
+          AND e.type = 'INCOME'
+    """)
+    Double getTotalIncome(
+            @Param("userId") Long userId,
+            @Param("monthYear") String monthYear
+    );
+
+    // =================================================
+    // 4️⃣ TOTAL EXPENSE (BAR CHART)
+    // =================================================
+    @Query("""
+        SELECT COALESCE(SUM(e.amount), 0)
+        FROM Expense e
+        WHERE e.userId = :userId
+          AND e.monthYear = :monthYear
+          AND e.type = 'EXPENSE'
+    """)
+    Double getTotalExpense(
+            @Param("userId") Long userId,
+            @Param("monthYear") String monthYear
+    );
+
+    // =================================================
+    // 5️⃣ MONTHLY SPENDING TREND (LINE CHART)
+    // =================================================
+    @Query("""
+        SELECT new com.budgetwise.backend.dto.MonthlyTrendDTO(
+            e.monthYear,
+            SUM(e.amount)
+        )
+        FROM Expense e
+        WHERE e.userId = :userId
+          AND e.type = 'EXPENSE'
+        GROUP BY e.monthYear
+        ORDER BY e.monthYear
+    """)
+    List<MonthlyTrendDTO> getMonthlyTrend(
+            @Param("userId") Long userId
+    );
+}
+

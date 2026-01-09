@@ -130,16 +130,21 @@ public class LoginController {
 
     private void openDashboard() {
         try {
+            FXMLLoader loader =
+                    new FXMLLoader(getClass().getResource("/ui/Dashboard.fxml"));
+
+            Scene scene = new Scene(loader.load());
+
             Stage stage = (Stage) emailField.getScene().getWindow();
-            stage.setScene(new Scene(
-                    FXMLLoader.load(
-                            getClass().getResource("/ui/Dashboard.fxml")
-                    )
-            ));
+            stage.setScene(scene);
+            stage.setMaximized(true);   // 🔥 THIS MAKES IT FULL PAGE
+            stage.show();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
     // ================= HELPERS =================
     private void showError(String msg) {

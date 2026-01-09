@@ -1,8 +1,10 @@
 package com.budgetwise.backend.controller;
 
+import com.budgetwise.backend.dto.CategoryExpenseDTO;
 import com.budgetwise.backend.dto.ExpenseRequestDTO;
 import com.budgetwise.backend.dto.ExpenseResponseDTO;
 import com.budgetwise.backend.dto.MonthlySummaryDTO;
+import com.budgetwise.backend.dto.MonthlyTrendDTO;
 import com.budgetwise.backend.model.Expense;
 import com.budgetwise.backend.service.ExpenseService;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +33,6 @@ public class ExpenseController {
             @RequestBody ExpenseRequestDTO dto
     ) {
 
-        // ---- basic validation ----
         if (dto.getType() == null || dto.getType().isBlank()) {
             return ResponseEntity.badRequest().body("type is required");
         }
@@ -92,7 +93,7 @@ public class ExpenseController {
     }
 
     // =================================================
-    // MONTHLY SUMMARY (INCOME vs EXPENSE)
+    // MONTHLY SUMMARY (INCOME vs EXPENSE – BAR CHART)
     // =================================================
     @GetMapping("/summary/{userId}")
     public ResponseEntity<MonthlySummaryDTO> getMonthlySummary(
@@ -101,6 +102,30 @@ public class ExpenseController {
     ) {
         return ResponseEntity.ok(
                 expenseService.getMonthlySummary(userId, monthYear)
+        );
+    }
+
+    // =================================================
+    // CATEGORY-WISE EXPENSE (PIE CHART)
+    // =================================================
+    @GetMapping("/category-wise/{userId}")
+    public ResponseEntity<List<CategoryExpenseDTO>> getCategoryWiseExpense(
+            @PathVariable Long userId
+    ) {
+        return ResponseEntity.ok(
+                expenseService.getCategoryWiseExpense(userId)
+        );
+    }
+
+    // =================================================
+    // MONTHLY SPENDING TREND (LINE CHART)
+    // =================================================
+    @GetMapping("/monthly-trend/{userId}")
+    public ResponseEntity<List<MonthlyTrendDTO>> getMonthlyTrend(
+            @PathVariable Long userId
+    ) {
+        return ResponseEntity.ok(
+                expenseService.getMonthlyExpenseTrend(userId)
         );
     }
 

@@ -2,13 +2,12 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.chart.*?>
 
 <AnchorPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml"
             fx:id="rootPane"
             fx:controller="com.budgetwise.javafx.controller.DashboardController"
-            prefWidth="1000"
-            prefHeight="600"
             stylesheets="@/css/app.css"
             styleClass="root">
 
@@ -23,10 +22,7 @@
         <Label text="💰 BudgetWise"
                styleClass="sidebar-title"/>
 
-        <!-- Sidebar items (NOW CLICKABLE) -->
         <VBox spacing="10">
-
-
             <Label text="📊 Expense Tracking"
                    styleClass="sidebar-item"
                    onMouseClicked="#openExpenses"/>
@@ -39,7 +35,6 @@
                    styleClass="sidebar-item"
                    onMouseClicked="#openSavingGoals"/>
 
-
             <Label text="📈 Reports"
                    styleClass="sidebar-item"
                    onMouseClicked="#openReports"/>
@@ -47,46 +42,90 @@
             <Label text="⚙ Settings"
                    styleClass="sidebar-item"
                    onMouseClicked="#openSettings"/>
-
         </VBox>
-
     </VBox>
 
     <!-- ================= MAIN CONTENT ================= -->
-    <VBox alignment="CENTER"
-          spacing="16"
-          AnchorPane.leftAnchor="260"
-          AnchorPane.rightAnchor="60"
-          AnchorPane.topAnchor="120"
-          styleClass="card">
+    <ScrollPane AnchorPane.leftAnchor="220"
+                AnchorPane.rightAnchor="0"
+                AnchorPane.topAnchor="0"
+                AnchorPane.bottomAnchor="0"
+                fitToWidth="true"
+                fitToHeight="true">
 
-        <!-- Dark mode toggle -->
-        <Button text="🌙 Dark Mode"
-                onAction="#toggleDarkMode"
-                styleClass="toggle-btn"
-                prefWidth="140"/>
+        <VBox spacing="25"
+              alignment="TOP_CENTER"
+              maxWidth="Infinity"
+              styleClass="card">
 
-        <!-- Welcome -->
-        <Label fx:id="welcomeLabel"
-               text="👤 Welcome"
-               styleClass="welcome-name"/>
+            <!-- Top bar -->
+            <HBox alignment="CENTER_RIGHT" maxWidth="Infinity">
+                <Button text="🌙 Dark Mode"
+                        onAction="#toggleDarkMode"/>
+            </HBox>
 
-        <!-- Title -->
-        <Label text="Welcome to BudgetWise Dashboard"
-               styleClass="dashboard-title"/>
+            <Label fx:id="welcomeLabel"
+                   styleClass="welcome-name"/>
 
-        <!-- Subtitle -->
-        <Label text="You have successfully logged in"
-               styleClass="dashboard-subtitle"/>
+            <Label text="Welcome to BudgetWise Dashboard"
+                   styleClass="dashboard-title"/>
 
-        <!-- Logout -->
-        <Button text="⏻ Logout"
-                prefWidth="180"
-                prefHeight="40"
-                onAction="#handleLogout"
-                styleClass="logout-btn"/>
+            <Label text="You have successfully logged in"
+                   styleClass="dashboard-subtitle"/>
 
-    </VBox>
+            <Button text="⏻ Logout"
+                    onAction="#handleLogout"/>
 
+            <!-- ================= FILTER BAR ================= -->
+            <HBox spacing="15"
+                  alignment="CENTER">
+
+                <Label text="Year:"/>
+                <ComboBox fx:id="yearCombo" prefWidth="120"/>
+
+                <Label text="Month:"/>
+                <ComboBox fx:id="monthCombo" prefWidth="140"/>
+
+            </HBox>
+
+            <!-- ================= PIE CHART ================= -->
+            <VBox spacing="10" alignment="CENTER">
+                <Label text="Category-wise Expense Distribution"/>
+                <PieChart fx:id="expensePieChart"
+                          prefWidth="500"
+                          prefHeight="350"/>
+            </VBox>
+
+            <!-- ================= BAR CHART ================= -->
+            <VBox spacing="10" alignment="CENTER">
+                <Label text="Income vs Expense"/>
+                <BarChart fx:id="incomeExpenseBarChart"
+                          prefHeight="300"
+                          prefWidth="700">
+                    <xAxis>
+                        <CategoryAxis/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis/>
+                    </yAxis>
+                </BarChart>
+            </VBox>
+
+            <!-- ================= LINE CHART ================= -->
+            <VBox spacing="10" alignment="CENTER">
+                <Label text="Monthly Spending Trend"/>
+                <LineChart fx:id="monthlyTrendLineChart"
+                           prefHeight="300"
+                           prefWidth="700">
+                    <xAxis>
+                        <CategoryAxis/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis/>
+                    </yAxis>
+                </LineChart>
+            </VBox>
+
+        </VBox>
+    </ScrollPane>
 </AnchorPane>
-

@@ -65,7 +65,6 @@ public class ExpenseController {
 
     // ================= EDIT MODE =================
     private Expense editingExpense = null;
-    private String editingMonthYear = null;
 
     // ================= INITIALIZE =================
     @FXML
@@ -74,6 +73,7 @@ public class ExpenseController {
         typeBox.setItems(FXCollections.observableArrayList("INCOME", "EXPENSE"));
         categoryBox.setPromptText("Select Category");
 
+        // Switch categories based on type
         typeBox.valueProperty().addListener((obs, o, n) -> {
             if ("INCOME".equals(n)) {
                 categoryBox.setItems(incomeCategories);
@@ -83,6 +83,14 @@ public class ExpenseController {
             categoryBox.setValue(null);
         });
 
+        // Numeric-only amount
+        amountField.textProperty().addListener((obs, old, val) -> {
+            if (!val.matches("\\d*(\\.\\d*)?")) {
+                amountField.setText(old);
+            }
+        });
+
+        // Table bindings
         dateCol.setCellValueFactory(d ->
                 new SimpleObjectProperty<>(d.getValue().getExpenseDate()));
         typeCol.setCellValueFactory(d ->
@@ -98,6 +106,10 @@ public class ExpenseController {
         expenseTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         addActionButtons();
+
+        // default date = today
+        datePicker.setValue(LocalDate.now());
+
         loadExpensesFromBackend();
     }
 
@@ -129,29 +141,23 @@ public class ExpenseController {
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(new HBox(8, editBtn, deleteBtn));
-                }
+                if (empty) setGraphic(null);
+                else setGraphic(new HBox(8, editBtn, deleteBtn));
             }
         });
     }
 
-    // ================= LOAD TO FORM (EDIT) =================
+    // ================= LOAD TO FORM =================
     private void loadExpenseToForm(Expense expense) {
 
         editingExpense = expense;
-        editingMonthYear = expense.getExpenseDate()
-                .format(DateTimeFormatter.ofPattern("yyyy-MM"));
 
         typeBox.setValue(expense.getType());
-
-        if ("INCOME".equals(expense.getType())) {
-            categoryBox.setItems(incomeCategories);
-        } else {
-            categoryBox.setItems(expenseCategories);
-        }
+        categoryBox.setItems(
+                "INCOME".equals(expense.getType())
+                        ? incomeCategories
+                        : expenseCategories
+        );
 
         categoryBox.setValue(expense.getCategory());
         amountField.setText(String.valueOf(expense.getAmount()));
@@ -159,7 +165,7 @@ public class ExpenseController {
         noteArea.setText(expense.getNote());
     }
 
-    // ================= SAVE (ADD / UPDATE) =================
+    // ================= SAVE =================
     @FXML
     private void handleSave() {
 
@@ -169,15 +175,24 @@ public class ExpenseController {
                 return;
             }
 
-            double amount = Double.parseDouble(amountField.getText());
-            LocalDate date = datePicker.getValue();
+            if (typeBox.getValue() == null ||
+                    categoryBox.getValue() == null ||
+                    amountField.getText().isBlank() ||
+                    datePicker.getValue() == null) {
 
-            String monthYear;
-            if (editingExpense != null) {
-                monthYear = editingMonthYear; // 🔥 keep original
-            } else {
-                monthYear = date.format(DateTimeFormatter.ofPattern("yyyy-MM"));
+                showAlert("All fields are required");
+                return;
             }
+
+            double amount = Double.parseDouble(amountField.getText());
+            if (amount <= 0) {
+                showAlert("Amount must be greater than zero");
+                return;
+            }
+
+            LocalDate date = datePicker.getValue();
+            String monthYear =
+                    date.format(DateTimeFormatter.ofPattern("yyyy-MM"));
 
             JSONObject body = new JSONObject();
             body.put("type", typeBox.getValue());
@@ -189,16 +204,13 @@ public class ExpenseController {
 
             HttpRequest request;
 
-            // ✏️ EDIT MODE
             if (editingExpense != null) {
                 request = HttpRequest.newBuilder()
                         .uri(new URI(BASE_URL + "/update/" + editingExpense.getId()))
                         .header("Content-Type", "application/json")
                         .PUT(HttpRequest.BodyPublishers.ofString(body.toString()))
                         .build();
-            }
-            // ➕ ADD MODE
-            else {
+            } else {
                 request = HttpRequest.newBuilder()
                         .uri(new URI(BASE_URL + "/add/" + Session.userId))
                         .header("Content-Type", "application/json")
@@ -211,6 +223,7 @@ public class ExpenseController {
 
             clearForm();
             loadExpensesFromBackend();
+            showAlert("Saved successfully");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -218,14 +231,19 @@ public class ExpenseController {
         }
     }
 
-    // ================= LOAD FROM BACKEND =================
+    // ================= LOAD TABLE =================
     private void loadExpensesFromBackend() {
 
         try {
             if (Session.userId == null) return;
 
+            LocalDate selectedDate =
+                    datePicker.getValue() != null
+                            ? datePicker.getValue()
+                            : LocalDate.now();
+
             String monthYear =
-                    LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"));
+                    selectedDate.format(DateTimeFormatter.ofPattern("yyyy-MM"));
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(new URI(
@@ -257,8 +275,9 @@ public class ExpenseController {
 
                 expenseList.add(e);
 
-                if ("INCOME".equals(e.getType())) balance += e.getAmount();
-                else balance -= e.getAmount();
+                balance += "INCOME".equals(e.getType())
+                        ? e.getAmount()
+                        : -e.getAmount();
             }
 
             balanceLabel.setText("₹" + String.format("%.2f", balance));
@@ -270,7 +289,6 @@ public class ExpenseController {
 
     // ================= DELETE =================
     private void deleteExpense(Long expenseId) {
-
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(new URI(BASE_URL + "/delete/" + expenseId))
@@ -296,11 +314,10 @@ public class ExpenseController {
 
     private void clearForm() {
         editingExpense = null;
-        editingMonthYear = null;
         typeBox.setValue(null);
         categoryBox.setValue(null);
         amountField.clear();
-        datePicker.setValue(null);
+        datePicker.setValue(LocalDate.now());
         noteArea.clear();
     }
 
@@ -312,6 +329,7 @@ public class ExpenseController {
             Parent root = FXMLLoader.load(url);
             Stage stage = (Stage) backButton.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -319,9 +337,8 @@ public class ExpenseController {
 
     // ================= ALERT =================
     private void showAlert(String msg) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setContentText(msg);
         alert.show();
     }
 }
-

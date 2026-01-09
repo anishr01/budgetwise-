@@ -1,7 +1,9 @@
 package com.budgetwise.backend.service;
 
+import com.budgetwise.backend.dto.CategoryExpenseDTO;
 import com.budgetwise.backend.dto.ExpenseRequestDTO;
 import com.budgetwise.backend.dto.MonthlySummaryDTO;
+import com.budgetwise.backend.dto.MonthlyTrendDTO;
 import com.budgetwise.backend.model.Expense;
 import com.budgetwise.backend.repository.ExpenseRepository;
 import org.springframework.stereotype.Service;
@@ -17,7 +19,16 @@ public class ExpenseService {
         this.expenseRepository = expenseRepository;
     }
 
-    // ===== ADD EXPENSE =====
+    // =================================================
+    // CATEGORY-WISE EXPENSE (PIE CHART)
+    // =================================================
+    public List<CategoryExpenseDTO> getCategoryWiseExpense(Long userId) {
+        return expenseRepository.getCategoryWiseExpense(userId);
+    }
+
+    // =================================================
+    // ADD EXPENSE
+    // =================================================
     public Expense addExpense(Long userId, ExpenseRequestDTO dto) {
 
         Expense expense = new Expense();
@@ -32,7 +43,9 @@ public class ExpenseService {
         return expenseRepository.save(expense);
     }
 
-    // ===== GET EXPENSES =====
+    // =================================================
+    // GET EXPENSES (LIST)
+    // =================================================
     public List<Expense> getExpensesByUserId(
             Long userId,
             String category,
@@ -46,6 +59,9 @@ public class ExpenseService {
         );
     }
 
+    // =================================================
+    // UPDATE EXPENSE
+    // =================================================
     public Expense updateExpense(Long id, ExpenseRequestDTO dto) {
 
         Expense expense = expenseRepository.findById(id)
@@ -58,16 +74,19 @@ public class ExpenseService {
         expense.setMonthYear(dto.getMonthYear());
         expense.setNote(dto.getNote());
 
-        return expenseRepository.save(expense); // 🔥 DB UPDATE
+        return expenseRepository.save(expense);
     }
 
-
-    // ===== DELETE EXPENSE =====
+    // =================================================
+    // DELETE EXPENSE
+    // =================================================
     public void deleteExpense(Long id) {
         expenseRepository.deleteById(id);
     }
 
-    // ===== MONTHLY SUMMARY =====
+    // =================================================
+    // MONTHLY SUMMARY (INCOME vs EXPENSE – BAR CHART)
+    // =================================================
     public MonthlySummaryDTO getMonthlySummary(Long userId, String monthYear) {
 
         Double totalIncome =
@@ -79,5 +98,10 @@ public class ExpenseService {
         return new MonthlySummaryDTO(totalIncome, totalExpense);
     }
 
+    // =================================================
+    // MONTHLY SPENDING TREND (LINE CHART) ✅ FIXED
+    // =================================================
+    public List<MonthlyTrendDTO> getMonthlyExpenseTrend(Long userId) {
+        return expenseRepository.getMonthlyTrend(userId);
+    }
 }
-
