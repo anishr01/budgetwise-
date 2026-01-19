@@ -60,24 +60,6 @@ public class ExpenseService {
     }
 
     // =================================================
-    // UPDATE EXPENSE
-    // =================================================
-    public Expense updateExpense(Long id, ExpenseRequestDTO dto) {
-
-        Expense expense = expenseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Expense not found"));
-
-        expense.setType(dto.getType());
-        expense.setCategory(dto.getCategory());
-        expense.setAmount(dto.getAmount());
-        expense.setExpenseDate(dto.getExpenseDate());
-        expense.setMonthYear(dto.getMonthYear());
-        expense.setNote(dto.getNote());
-
-        return expenseRepository.save(expense);
-    }
-
-    // =================================================
     // DELETE EXPENSE
     // =================================================
     public void deleteExpense(Long id) {
@@ -85,21 +67,24 @@ public class ExpenseService {
     }
 
     // =================================================
-    // MONTHLY SUMMARY (INCOME vs EXPENSE – BAR CHART)
+    // ✅ INCOME vs EXPENSE (BAR CHART) — FIXED
     // =================================================
     public MonthlySummaryDTO getMonthlySummary(Long userId, String monthYear) {
 
-        Double totalIncome =
-                expenseRepository.getTotalIncome(userId, monthYear);
+        Double income = expenseRepository.getTotalIncome(userId, monthYear);
+        Double expense = expenseRepository.getTotalExpense(userId, monthYear);
 
-        Double totalExpense =
-                expenseRepository.getTotalExpense(userId, monthYear);
+        if (income == null) income = 0.0;
+        if (expense == null) expense = 0.0;
 
-        return new MonthlySummaryDTO(totalIncome, totalExpense);
+        System.out.println("SERVICE → Income = " + income);
+        System.out.println("SERVICE → Expense = " + expense);
+
+        return new MonthlySummaryDTO(income, expense);
     }
 
     // =================================================
-    // MONTHLY SPENDING TREND (LINE CHART) ✅ FIXED
+    // MONTHLY SPENDING TREND (LINE CHART)
     // =================================================
     public List<MonthlyTrendDTO> getMonthlyExpenseTrend(Long userId) {
         return expenseRepository.getMonthlyTrend(userId);

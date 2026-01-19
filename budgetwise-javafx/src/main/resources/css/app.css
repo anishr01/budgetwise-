@@ -214,3 +214,20 @@
     -fx-background-color: #d1d5db;
 }
 
+.chart {
+    -fx-padding: 20;
+}
+
+.chart-plot-background {
+    -fx-background-color: transparent;
+}
+
+.chart-horizontal-grid-lines,
+.chart-vertical-grid-lines {
+    -fx-stroke: #e5e7eb;
+}
+
+.chart-series-line {
+    -fx-stroke-width: 3px;
+}
+

@@ -22,7 +22,7 @@
         <Label text="💰 BudgetWise"
                styleClass="sidebar-title"/>
 
-        <VBox spacing="10">
+        <VBox spacing="12">
             <Label text="📊 Expense Tracking"
                    styleClass="sidebar-item"
                    onMouseClicked="#openExpenses"/>
@@ -50,10 +50,9 @@
                 AnchorPane.rightAnchor="0"
                 AnchorPane.topAnchor="0"
                 AnchorPane.bottomAnchor="0"
-                fitToWidth="true"
-                fitToHeight="true">
+                fitToWidth="true">
 
-        <VBox spacing="25"
+        <VBox spacing="30"
               alignment="TOP_CENTER"
               maxWidth="Infinity"
               styleClass="card">
@@ -61,9 +60,11 @@
             <!-- Top bar -->
             <HBox alignment="CENTER_RIGHT" maxWidth="Infinity">
                 <Button text="🌙 Dark Mode"
-                        onAction="#toggleDarkMode"/>
+                        onAction="#toggleDarkMode"
+                        styleClass="toggle-btn"/>
             </HBox>
 
+            <!-- Welcome -->
             <Label fx:id="welcomeLabel"
                    styleClass="welcome-name"/>
 
@@ -74,34 +75,62 @@
                    styleClass="dashboard-subtitle"/>
 
             <Button text="⏻ Logout"
-                    onAction="#handleLogout"/>
+                    onAction="#handleLogout"
+                    prefWidth="160"
+                    styleClass="logout-btn"/>
 
-            <!-- ================= FILTER BAR ================= -->
-            <HBox spacing="15"
+            <!-- ================= DOWNLOAD REPORT BUTTONS ================= -->
+            <HBox spacing="20"
                   alignment="CENTER">
 
-                <Label text="Year:"/>
-                <ComboBox fx:id="yearCombo" prefWidth="120"/>
+                <Button text="⬇ Download CSV"
+                        onAction="#downloadCsv"
+                        prefWidth="180"
+                        styleClass="action-btn"/>
 
-                <Label text="Month:"/>
-                <ComboBox fx:id="monthCombo" prefWidth="140"/>
+                <Button text="⬇ Download PDF"
+                        onAction="#downloadPdf"
+                        prefWidth="180"
+                        styleClass="action-btn"/>
 
             </HBox>
 
+
             <!-- ================= PIE CHART ================= -->
-            <VBox spacing="10" alignment="CENTER">
-                <Label text="Category-wise Expense Distribution"/>
+            <VBox spacing="20"
+                  alignment="CENTER"
+                  styleClass="card"
+                  minHeight="580"
+                  prefHeight="580"
+                  maxWidth="Infinity">
+
+                <Label text="Category-wise Expense Distribution"
+                       styleClass="section-title"/>
+
                 <PieChart fx:id="expensePieChart"
-                          prefWidth="500"
-                          prefHeight="350"/>
+                          prefWidth="520"
+                          prefHeight="520"
+                          minWidth="520"
+                          minHeight="520"
+                          legendSide="RIGHT"/>
             </VBox>
 
-            <!-- ================= BAR CHART ================= -->
-            <VBox spacing="10" alignment="CENTER">
-                <Label text="Income vs Expense"/>
+            <!-- ================= BAR CHART (FIXED SIZE) ================= -->
+            <VBox spacing="12"
+                  alignment="CENTER"
+                  styleClass="card"
+                  VBox.vgrow="ALWAYS"
+                  minHeight="420">
+
+                <Label text="Income vs Expense"
+                       styleClass="section-title"/>
+
                 <BarChart fx:id="incomeExpenseBarChart"
-                          prefHeight="300"
-                          prefWidth="700">
+                          prefHeight="350"
+                          minHeight="350"
+                          animated="false"
+                          categoryGap="60"
+                          barGap="20">
                     <xAxis>
                         <CategoryAxis/>
                     </xAxis>
@@ -111,21 +140,54 @@
                 </BarChart>
             </VBox>
 
-            <!-- ================= LINE CHART ================= -->
-            <VBox spacing="10" alignment="CENTER">
-                <Label text="Monthly Spending Trend"/>
+            <!-- ================= LINE CHART (FIXED SIZE) ================= -->
+            <VBox spacing="12"
+                  alignment="CENTER"
+                  styleClass="card"
+                  VBox.vgrow="ALWAYS"
+                  minHeight="420">
+
+                <Label text="Monthly Spending Trend"
+                       styleClass="section-title"/>
+
                 <LineChart fx:id="monthlyTrendLineChart"
-                           prefHeight="300"
-                           prefWidth="700">
+                           prefHeight="350"
+                           minHeight="350"
+                           maxWidth="Infinity"
+                           animated="true"
+                           createSymbols="true">
+
                     <xAxis>
                         <CategoryAxis/>
                     </xAxis>
+
                     <yAxis>
                         <NumberAxis/>
                     </yAxis>
+
                 </LineChart>
             </VBox>
 
+
+            <!-- ================= AI INSIGHTS ================= -->
+            <VBox spacing="12"
+                  alignment="CENTER"
+                  styleClass="card"
+                  minHeight="200">
+
+                <Label text="🤖 AI Spending Insights"
+                       styleClass="section-title"/>
+
+                <TextArea fx:id="aiInsightArea"
+                          prefWidth="750"
+                          prefHeight="150"
+                          editable="false"
+                          wrapText="true"/>
+            </VBox>
+
         </VBox>
+
+
+
     </ScrollPane>
 </AnchorPane>

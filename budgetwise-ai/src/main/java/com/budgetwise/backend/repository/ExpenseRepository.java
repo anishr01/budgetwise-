@@ -5,15 +5,60 @@ import com.budgetwise.backend.dto.MonthlyTrendDTO;
 import com.budgetwise.backend.model.Expense;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
 public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
-    // =================================================
-    // 1️⃣ CATEGORY-WISE EXPENSE (PIE CHART)
-    // =================================================
+    // =============================
+    // LIST EXPENSES
+    // =============================
+    List<Expense> findByUserIdAndMonthYear(
+            Long userId,
+            String monthYear
+    );
+
+    List<Expense> findByUserIdAndCategoryAndMonthYear(
+            Long userId,
+            String category,
+            String monthYear
+    );
+
+    // =============================
+    // TOTAL INCOME
+    // =============================
+    @Query("""
+        SELECT COALESCE(SUM(e.amount), 0)
+        FROM Expense e
+        WHERE e.userId = :userId
+          AND e.monthYear = :monthYear
+          AND e.type = 'INCOME'
+    """)
+    Double getTotalIncome(
+            @Param("userId") Long userId,
+            @Param("monthYear") String monthYear
+    );
+
+    // =============================
+    // TOTAL EXPENSE
+    // =============================
+    @Query("""
+        SELECT COALESCE(SUM(e.amount), 0)
+        FROM Expense e
+        WHERE e.userId = :userId
+          AND e.monthYear = :monthYear
+          AND e.type = 'EXPENSE'
+    """)
+    Double getTotalExpense(
+            @Param("userId") Long userId,
+            @Param("monthYear") String monthYear
+    );
+
+    // =============================
+    // CATEGORY-WISE EXPENSE
+    // =============================
     @Query("""
         SELECT new com.budgetwise.backend.dto.CategoryExpenseDTO(
             e.category,
@@ -28,53 +73,9 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
             @Param("userId") Long userId
     );
 
-    // =================================================
-    // 2️⃣ EXPENSE LIST (FILTERS)
-    // =================================================
-    List<Expense> findByUserIdAndMonthYear(
-            Long userId,
-            String monthYear
-    );
-
-    List<Expense> findByUserIdAndCategoryAndMonthYear(
-            Long userId,
-            String category,
-            String monthYear
-    );
-
-    // =================================================
-    // 3️⃣ TOTAL INCOME (BAR CHART)
-    // =================================================
-    @Query("""
-        SELECT COALESCE(SUM(e.amount), 0)
-        FROM Expense e
-        WHERE e.userId = :userId
-          AND e.monthYear = :monthYear
-          AND e.type = 'INCOME'
-    """)
-    Double getTotalIncome(
-            @Param("userId") Long userId,
-            @Param("monthYear") String monthYear
-    );
-
-    // =================================================
-    // 4️⃣ TOTAL EXPENSE (BAR CHART)
-    // =================================================
-    @Query("""
-        SELECT COALESCE(SUM(e.amount), 0)
-        FROM Expense e
-        WHERE e.userId = :userId
-          AND e.monthYear = :monthYear
-          AND e.type = 'EXPENSE'
-    """)
-    Double getTotalExpense(
-            @Param("userId") Long userId,
-            @Param("monthYear") String monthYear
-    );
-
-    // =================================================
-    // 5️⃣ MONTHLY SPENDING TREND (LINE CHART)
-    // =================================================
+    // =============================
+    // MONTHLY TREND
+    // =============================
     @Query("""
         SELECT new com.budgetwise.backend.dto.MonthlyTrendDTO(
             e.monthYear,
@@ -84,7 +85,7 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
         WHERE e.userId = :userId
           AND e.type = 'EXPENSE'
         GROUP BY e.monthYear
-        ORDER BY e.monthYear
+        ORDER BY e.monthYear ASC
     """)
     List<MonthlyTrendDTO> getMonthlyTrend(
             @Param("userId") Long userId

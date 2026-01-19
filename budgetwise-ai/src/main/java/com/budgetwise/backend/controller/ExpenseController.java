@@ -1,10 +1,6 @@
 package com.budgetwise.backend.controller;
 
-import com.budgetwise.backend.dto.CategoryExpenseDTO;
-import com.budgetwise.backend.dto.ExpenseRequestDTO;
-import com.budgetwise.backend.dto.ExpenseResponseDTO;
-import com.budgetwise.backend.dto.MonthlySummaryDTO;
-import com.budgetwise.backend.dto.MonthlyTrendDTO;
+import com.budgetwise.backend.dto.*;
 import com.budgetwise.backend.model.Expense;
 import com.budgetwise.backend.service.ExpenseService;
 import org.springframework.http.ResponseEntity;
@@ -45,9 +41,6 @@ public class ExpenseController {
         if (dto.getExpenseDate() == null) {
             return ResponseEntity.badRequest().body("expenseDate is required");
         }
-        if (dto.getMonthYear() == null || dto.getMonthYear().isBlank()) {
-            return ResponseEntity.badRequest().body("monthYear is required");
-        }
 
         Expense saved = expenseService.addExpense(userId, dto);
 
@@ -65,7 +58,7 @@ public class ExpenseController {
     }
 
     // =================================================
-    // GET EXPENSES (MONTH + OPTIONAL CATEGORY)
+    // GET EXPENSES BY USER + MONTH (TABLE VIEW)
     // =================================================
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<ExpenseResponseDTO>> getExpensesByUser(
@@ -93,7 +86,8 @@ public class ExpenseController {
     }
 
     // =================================================
-    // MONTHLY SUMMARY (INCOME vs EXPENSE – BAR CHART)
+    // INCOME vs EXPENSE (BAR CHART) ✅ FIXED
+    // URL: /api/expenses/summary/{userId}
     // =================================================
     @GetMapping("/summary/{userId}")
     public ResponseEntity<MonthlySummaryDTO> getMonthlySummary(
@@ -118,7 +112,7 @@ public class ExpenseController {
     }
 
     // =================================================
-    // MONTHLY SPENDING TREND (LINE CHART)
+    // MONTHLY EXPENSE TREND (LINE CHART)
     // =================================================
     @GetMapping("/monthly-trend/{userId}")
     public ResponseEntity<List<MonthlyTrendDTO>> getMonthlyTrend(

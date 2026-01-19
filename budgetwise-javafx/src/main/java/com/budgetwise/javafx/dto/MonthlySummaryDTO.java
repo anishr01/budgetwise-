@@ -5,7 +5,15 @@ public class MonthlySummaryDTO {
     private Double totalIncome;
     private Double totalExpense;
 
-    public MonthlySummaryDTO() {}
+    // ✅ REQUIRED: no-args constructor
+    public MonthlySummaryDTO() {
+    }
+
+    // ✅ REQUIRED: 2-arg constructor (YOU ARE MISSING THIS)
+    public MonthlySummaryDTO(Double totalIncome, Double totalExpense) {
+        this.totalIncome = totalIncome;
+        this.totalExpense = totalExpense;
+    }
 
     public Double getTotalIncome() {
         return totalIncome;

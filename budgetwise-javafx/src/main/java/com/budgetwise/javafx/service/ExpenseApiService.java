@@ -6,10 +6,10 @@ import com.budgetwise.javafx.dto.MonthlyTrendDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 
 public class ExpenseApiService {
@@ -17,88 +17,76 @@ public class ExpenseApiService {
     private static final String BASE_URL =
             "http://localhost:8080/api/expenses";
 
-    private final HttpClient httpClient = HttpClient.newHttpClient();
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
-    // ================= 1️⃣ CATEGORY-WISE =================
-    public List<CategoryExpenseDTO> getCategoryWiseExpense(Long userId) {
+    // ================= PIE CHART =================
+    public List<CategoryExpenseDTO> getCategoryExpenseSummary(Long userId) {
 
         try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(BASE_URL + "/category-wise/" + userId))
-                    .GET()
-                    .build();
+            URL url = new URL(BASE_URL + "/category-wise/" + userId);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
 
-            HttpResponse<String> response =
-                    httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(con.getInputStream()));
 
-            if (response.statusCode() == 200) {
-                return objectMapper.readValue(
-                        response.body(),
-                        new TypeReference<List<CategoryExpenseDTO>>() {}
-                );
-            }
+            return mapper.readValue(
+                    reader,
+                    new TypeReference<List<CategoryExpenseDTO>>() {}
+            );
 
         } catch (Exception e) {
             e.printStackTrace();
+            return List.of();
         }
-
-        return List.of();
     }
 
-    // ================= 2️⃣ INCOME vs EXPENSE =================
-    public MonthlySummaryDTO getMonthlySummary(Long userId, String monthYear) {
+    // ================= BAR CHART =================
+    public MonthlySummaryDTO getMonthlySummary(
+            Long userId,
+            String monthYear
+    ) {
 
         try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(
-                            BASE_URL + "/summary/" + userId + "?monthYear=" + monthYear
-                    ))
-                    .GET()
-                    .build();
+            URL url = new URL(
+                    BASE_URL + "/summary/" + userId + "?monthYear=" + monthYear
+            );
 
-            HttpResponse<String> response =
-                    httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpURLConnection con =
+                    (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
 
-            if (response.statusCode() == 200) {
-                return objectMapper.readValue(
-                        response.body(),
-                        MonthlySummaryDTO.class
-                );
-            }
+            BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(con.getInputStream()));
+
+            return mapper.readValue(reader, MonthlySummaryDTO.class);
 
         } catch (Exception e) {
             e.printStackTrace();
+            return new MonthlySummaryDTO(0.0, 0.0);
         }
-
-        return null;
     }
 
-    // ================= 3️⃣ MONTHLY TREND =================
+    // ================= LINE CHART =================
     public List<MonthlyTrendDTO> getMonthlyTrend(Long userId) {
 
         try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(
-                            BASE_URL + "/monthly-trend/" + userId
-                    ))
-                    .GET()
-                    .build();
+            URL url = new URL(BASE_URL + "/monthly-trend/" + userId);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
 
-            HttpResponse<String> response =
-                    httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(con.getInputStream()));
 
-            if (response.statusCode() == 200) {
-                return objectMapper.readValue(
-                        response.body(),
-                        new TypeReference<List<MonthlyTrendDTO>>() {}
-                );
-            }
+            return mapper.readValue(
+                    reader,
+                    new TypeReference<List<MonthlyTrendDTO>>() {}
+            );
 
         } catch (Exception e) {
             e.printStackTrace();
+            return List.of();
         }
-
-        return List.of();
     }
 }
+

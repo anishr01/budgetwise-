@@ -26,7 +26,7 @@ import java.time.format.DateTimeFormatter;
 
 public class ExpenseController {
 
-    // ================= FORM =================
+    /* ================= FORM ================= */
     @FXML private ComboBox<String> typeBox;
     @FXML private ComboBox<String> categoryBox;
     @FXML private TextField amountField;
@@ -34,7 +34,7 @@ public class ExpenseController {
     @FXML private TextArea noteArea;
     @FXML private Button backButton;
 
-    // ================= TABLE =================
+    /* ================= TABLE ================= */
     @FXML private TableView<Expense> expenseTable;
     @FXML private TableColumn<Expense, LocalDate> dateCol;
     @FXML private TableColumn<Expense, String> typeCol;
@@ -43,37 +43,29 @@ public class ExpenseController {
     @FXML private TableColumn<Expense, String> noteCol;
     @FXML private TableColumn<Expense, Void> actionCol;
 
-    // ================= BALANCE =================
+    /* ================= BALANCE ================= */
     @FXML private Label balanceLabel;
 
-    // ================= DATA =================
-    private final ObservableList<Expense> expenseList =
-            FXCollections.observableArrayList();
+    /* ================= DATA ================= */
+    private final ObservableList<Expense> expenseList = FXCollections.observableArrayList();
 
     private final ObservableList<String> incomeCategories =
-            FXCollections.observableArrayList(
-                    "Salary", "Bonus", "Interest", "Other Income"
-            );
+            FXCollections.observableArrayList("Salary", "Bonus", "Interest", "Other Income");
 
     private final ObservableList<String> expenseCategories =
-            FXCollections.observableArrayList(
-                    "Food", "Transport", "Rent", "Shopping", "Bills", "Other"
-            );
+            FXCollections.observableArrayList("Food", "Transport", "Rent", "Shopping", "Bills", "Other");
 
-    private static final String BASE_URL =
-            "http://localhost:8080/api/expenses";
+    private static final String BASE_URL = "http://localhost:8080/api/expenses";
 
-    // ================= EDIT MODE =================
     private Expense editingExpense = null;
 
-    // ================= INITIALIZE =================
+    /* ================= INITIALIZE ================= */
     @FXML
     public void initialize() {
 
         typeBox.setItems(FXCollections.observableArrayList("INCOME", "EXPENSE"));
-        categoryBox.setPromptText("Select Category");
+        datePicker.setValue(LocalDate.now());
 
-        // Switch categories based on type
         typeBox.valueProperty().addListener((obs, o, n) -> {
             if ("INCOME".equals(n)) {
                 categoryBox.setItems(incomeCategories);
@@ -83,37 +75,28 @@ public class ExpenseController {
             categoryBox.setValue(null);
         });
 
-        // Numeric-only amount
         amountField.textProperty().addListener((obs, old, val) -> {
             if (!val.matches("\\d*(\\.\\d*)?")) {
                 amountField.setText(old);
             }
         });
 
-        // Table bindings
-        dateCol.setCellValueFactory(d ->
-                new SimpleObjectProperty<>(d.getValue().getExpenseDate()));
-        typeCol.setCellValueFactory(d ->
-                new SimpleStringProperty(d.getValue().getType()));
-        categoryCol.setCellValueFactory(d ->
-                new SimpleStringProperty(d.getValue().getCategory()));
-        amountCol.setCellValueFactory(d ->
-                new SimpleObjectProperty<>(d.getValue().getAmount()));
-        noteCol.setCellValueFactory(d ->
-                new SimpleStringProperty(d.getValue().getNote()));
+        datePicker.valueProperty().addListener((obs, o, n) -> loadExpensesFromBackend());
+
+        dateCol.setCellValueFactory(d -> new SimpleObjectProperty<>(d.getValue().getExpenseDate()));
+        typeCol.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getType()));
+        categoryCol.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getCategory()));
+        amountCol.setCellValueFactory(d -> new SimpleObjectProperty<>(d.getValue().getAmount()));
+        noteCol.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getNote()));
 
         expenseTable.setItems(expenseList);
         expenseTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         addActionButtons();
-
-        // default date = today
-        datePicker.setValue(LocalDate.now());
-
         loadExpensesFromBackend();
     }
 
-    // ================= ACTION COLUMN =================
+    /* ================= ACTION COLUMN ================= */
     private void addActionButtons() {
 
         actionCol.setCellFactory(col -> new TableCell<>() {
@@ -122,50 +105,23 @@ public class ExpenseController {
             private final Button deleteBtn = new Button("Delete");
 
             {
-                editBtn.setStyle("-fx-background-color:#2563eb; -fx-text-fill:white;");
-                deleteBtn.setStyle("-fx-background-color:#dc2626; -fx-text-fill:white;");
-
-                editBtn.setOnAction(e -> {
-                    Expense expense =
-                            getTableView().getItems().get(getIndex());
-                    loadExpenseToForm(expense);
-                });
-
-                deleteBtn.setOnAction(e -> {
-                    Expense expense =
-                            getTableView().getItems().get(getIndex());
-                    deleteExpense(expense.getId());
-                });
+                editBtn.setOnAction(e ->
+                        loadExpenseToForm(getTableView().getItems().get(getIndex()))
+                );
+                deleteBtn.setOnAction(e ->
+                        deleteExpense(getTableView().getItems().get(getIndex()).getId())
+                );
             }
 
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) setGraphic(null);
-                else setGraphic(new HBox(8, editBtn, deleteBtn));
+                setGraphic(empty ? null : new HBox(8, editBtn, deleteBtn));
             }
         });
     }
 
-    // ================= LOAD TO FORM =================
-    private void loadExpenseToForm(Expense expense) {
-
-        editingExpense = expense;
-
-        typeBox.setValue(expense.getType());
-        categoryBox.setItems(
-                "INCOME".equals(expense.getType())
-                        ? incomeCategories
-                        : expenseCategories
-        );
-
-        categoryBox.setValue(expense.getCategory());
-        amountField.setText(String.valueOf(expense.getAmount()));
-        datePicker.setValue(expense.getExpenseDate());
-        noteArea.setText(expense.getNote());
-    }
-
-    // ================= SAVE =================
+    /* ================= SAVE / UPDATE ================= */
     @FXML
     private void handleSave() {
 
@@ -177,89 +133,68 @@ public class ExpenseController {
 
             if (typeBox.getValue() == null ||
                     categoryBox.getValue() == null ||
-                    amountField.getText().isBlank() ||
-                    datePicker.getValue() == null) {
-
-                showAlert("All fields are required");
+                    amountField.getText().isBlank()) {
+                showAlert("All fields required");
                 return;
             }
 
             double amount = Double.parseDouble(amountField.getText());
-            if (amount <= 0) {
-                showAlert("Amount must be greater than zero");
-                return;
-            }
-
             LocalDate date = datePicker.getValue();
-            String monthYear =
-                    date.format(DateTimeFormatter.ofPattern("yyyy-MM"));
 
             JSONObject body = new JSONObject();
             body.put("type", typeBox.getValue());
             body.put("category", categoryBox.getValue());
             body.put("amount", amount);
             body.put("expenseDate", date.toString());
-            body.put("monthYear", monthYear);
+            body.put("monthYear", date.format(DateTimeFormatter.ofPattern("yyyy-MM")));
             body.put("note", noteArea.getText());
 
             HttpRequest request;
 
-            if (editingExpense != null) {
-                request = HttpRequest.newBuilder()
-                        .uri(new URI(BASE_URL + "/update/" + editingExpense.getId()))
-                        .header("Content-Type", "application/json")
-                        .PUT(HttpRequest.BodyPublishers.ofString(body.toString()))
-                        .build();
-            } else {
+            if (editingExpense == null) {
                 request = HttpRequest.newBuilder()
                         .uri(new URI(BASE_URL + "/add/" + Session.userId))
                         .header("Content-Type", "application/json")
                         .POST(HttpRequest.BodyPublishers.ofString(body.toString()))
                         .build();
+            } else {
+                request = HttpRequest.newBuilder()
+                        .uri(new URI(BASE_URL + "/" + editingExpense.getId()))
+                        .header("Content-Type", "application/json")
+                        .PUT(HttpRequest.BodyPublishers.ofString(body.toString()))
+                        .build();
             }
 
-            HttpClient.newHttpClient()
-                    .send(request, HttpResponse.BodyHandlers.ofString());
+            HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 
+            editingExpense = null;
             clearForm();
             loadExpensesFromBackend();
-            showAlert("Saved successfully");
 
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Failed to save expense");
+            showAlert("Save failed");
         }
     }
 
-    // ================= LOAD TABLE =================
+    /* ================= LOAD TABLE ================= */
     private void loadExpensesFromBackend() {
 
         try {
-            if (Session.userId == null) return;
+            expenseList.clear();
 
-            LocalDate selectedDate =
-                    datePicker.getValue() != null
-                            ? datePicker.getValue()
-                            : LocalDate.now();
-
-            String monthYear =
-                    selectedDate.format(DateTimeFormatter.ofPattern("yyyy-MM"));
+            String monthYear = datePicker.getValue()
+                    .format(DateTimeFormatter.ofPattern("yyyy-MM"));
 
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI(
-                            BASE_URL + "/user/" + Session.userId +
-                                    "?monthYear=" + monthYear
-                    ))
+                    .uri(new URI(BASE_URL + "/user/" + Session.userId + "?monthYear=" + monthYear))
                     .GET()
                     .build();
 
             HttpResponse<String> response =
-                    HttpClient.newHttpClient()
-                            .send(request, HttpResponse.BodyHandlers.ofString());
+                    HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 
             JSONArray array = new JSONArray(response.body());
-
-            expenseList.clear();
             double balance = 0;
 
             for (int i = 0; i < array.length(); i++) {
@@ -274,10 +209,7 @@ public class ExpenseController {
                 e.setNote(o.optString("note", ""));
 
                 expenseList.add(e);
-
-                balance += "INCOME".equals(e.getType())
-                        ? e.getAmount()
-                        : -e.getAmount();
+                balance += "INCOME".equals(e.getType()) ? e.getAmount() : -e.getAmount();
             }
 
             balanceLabel.setText("₹" + String.format("%.2f", balance));
@@ -287,26 +219,38 @@ public class ExpenseController {
         }
     }
 
-    // ================= DELETE =================
-    private void deleteExpense(Long expenseId) {
+    /* ================= DELETE ================= */
+    private void deleteExpense(Long id) {
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI(BASE_URL + "/delete/" + expenseId))
+                    .uri(new URI(BASE_URL + "/" + id))
                     .DELETE()
                     .build();
 
-            HttpClient.newHttpClient()
-                    .send(request, HttpResponse.BodyHandlers.ofString());
-
+            HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
             loadExpensesFromBackend();
 
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Failed to delete expense");
         }
     }
 
-    // ================= CLEAR =================
+    /* ================= BACK ================= */
+    @FXML
+    private void handleBack() {
+        try {
+            Parent root = FXMLLoader.load(
+                    getClass().getResource("/ui/Dashboard.fxml")
+            );
+            Stage stage = (Stage) backButton.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setMaximized(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /* ================= CLEAR ================= */
     @FXML
     private void handleClear() {
         clearForm();
@@ -321,21 +265,16 @@ public class ExpenseController {
         noteArea.clear();
     }
 
-    // ================= BACK =================
-    @FXML
-    private void handleBack() {
-        try {
-            URL url = getClass().getResource("/ui/Dashboard.fxml");
-            Parent root = FXMLLoader.load(url);
-            Stage stage = (Stage) backButton.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setMaximized(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private void loadExpenseToForm(Expense e) {
+        editingExpense = e;
+        typeBox.setValue(e.getType());
+        categoryBox.setItems("INCOME".equals(e.getType()) ? incomeCategories : expenseCategories);
+        categoryBox.setValue(e.getCategory());
+        amountField.setText(String.valueOf(e.getAmount()));
+        datePicker.setValue(e.getExpenseDate());
+        noteArea.setText(e.getNote());
     }
 
-    // ================= ALERT =================
     private void showAlert(String msg) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setContentText(msg);

@@ -5,7 +5,15 @@ public class MonthlyTrendDTO {
     private String month;
     private Double totalExpense;
 
-    public MonthlyTrendDTO() {}
+    // ✅ Required by Jackson
+    public MonthlyTrendDTO() {
+    }
+
+    // ✅ REQUIRED by JPQL constructor expression
+    public MonthlyTrendDTO(String month, Double totalExpense) {
+        this.month = month;
+        this.totalExpense = totalExpense;
+    }
 
     public String getMonth() {
         return month;
